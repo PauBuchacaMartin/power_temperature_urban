@@ -79,9 +79,12 @@ def prepare(consumption, temp, tc, lags=3, months=(6, 7, 8, 9), years=None):
     return table.dropna().reset_index(drop=True)
 
 
-def static_susceptibility(beta, cov, lags=3, suffix=""):
-    """chi0 = 100 * sum_k chi_k (% per degree-day) and its standard error."""
-    names = [f"cdd{k}{suffix}" for k in range(lags + 1)]
+def static_susceptibility(beta, cov, lags=3, suffix="", prefix="cdd"):
+    """chi0 = 100 * sum_k chi_k (% per degree-day) and its standard error.
+
+    prefix: "cdd" (heat branch) or "hdd" (cold branch).
+    """
+    names = [f"{prefix}{k}{suffix}" for k in range(lags + 1)]
     names = [n for n in names if n in beta.index]
     w = np.ones(len(names))
     chi = 100 * float(beta[names].values @ w)
@@ -110,9 +113,14 @@ def choose_tc(consumption, temp, candidates=np.arange(18.0, 25.5, 0.5), lags=3, 
     return float(prof.loc[prof["mse"].idxmin(), "tc"]), prof
 
 
-def response_by_year(consumption, temp, tc, lags=3, years=None, holidays=(), **kw):
-    """chi0 for each summer (CDD x year interaction) and growth between two years."""
+def response_by_year(consumption, temp, tc, lags=3, years=None, holidays=(), exclude=None, **kw):
+    """chi0 for each summer (CDD x year interaction) and growth between two years.
+
+    exclude: iterable of dates to drop (e.g. heatwave days, as in section 20d of the notebook).
+    """
     table = prepare(consumption, temp, tc, lags, years=years, **kw)
+    if exclude is not None:
+        table = table[~table["data"].isin(pd.to_datetime(list(exclude)))].reset_index(drop=True)
     years = sorted(table["data"].dt.year.unique()) if years is None else list(years)
     X = design_matrix(table, lags, years=years, holidays=holidays, by_year=True)
     beta, cov, _ = fit_cluster(table, X)
@@ -122,10 +130,13 @@ def response_by_year(consumption, temp, tc, lags=3, years=None, holidays=(), **k
     return pd.DataFrame(out, index=["chi0", "se"]).T, beta, cov
 
 
-def growth(beta, cov, y0, y1, lags=3):
-    """Difference chi0(y1) - chi0(y0) with its standard error (covariances included)."""
-    n0 = [f"cdd{k}_{y0}" for k in range(lags + 1)]
-    n1 = [f"cdd{k}_{y1}" for k in range(lags + 1)]
+def growth(beta, cov, y0, y1, lags=3, prefix="cdd"):
+    """Difference chi0(y1) - chi0(y0) with its standard error (covariances included).
+
+    prefix: "cdd" for summers (labels = years), "hdd" for winters (labels = starting year).
+    """
+    n0 = [f"{prefix}{k}_{y0}" for k in range(lags + 1)]
+    n1 = [f"{prefix}{k}_{y1}" for k in range(lags + 1)]
     names = n0 + n1
     w = np.r_[-np.ones(len(n0)), np.ones(len(n1))]
     d = 100 * float(beta[names].values @ w)

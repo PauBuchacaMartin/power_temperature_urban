@@ -47,7 +47,9 @@ el vehicle elèctric, el preu ni l'any de la COVID. Només falla la prova amb ju
 
 ## Pendent per tancar l'article
 
-- [ ] Afegir el fred (graus-dia de calefacció) i el preu, estimats conjuntament amb la calor.
+- [x] Branca de fred (graus-dia de calefacció) per hivern i simetria de la V: `seasonal.py`, notebook v0.12 secció 24 (pendent d'executar amb dades reals).
+- [ ] Preu estimat conjuntament amb la calor i el fred.
+- [x] Test d'histèresi (test de fronts amb memòria flexible): `seasonal.py`, notebook v0.12 secció 25 (pendent d'executar amb dades reals).
 - [ ] Intervals de confiança per bootstrap per a la part extensiva.
 - [ ] Contrast de l'equipament amb una enquesta independent de llars.
 - [ ] Proposar l'estructura a l'AiEM (coautors).
@@ -56,3 +58,16 @@ el vehicle elèctric, el preu ni l'any de la COVID. Només falla la prova amb ju
 
 Auffhammer i Mansur 2014; Davis i Gertler 2015; Wenz, Levermann i Auffhammer 2017;
 Moral-Carcedo i Vicéns-Otero 2005; Salvati, Coch i Cecere 2017; De Cian, Falchetta et al. 2025 (*JEEM*).
+
+## v0.12 (24/10/2026): fred i histèresi
+
+**Branca de fred.** Model d'hivern (novembre-març) amb graus-dia de calefacció i efectes fixos d'hivern,
+setmana ISO (absorbeix el cicle de la llum), dia, festiu i Nadal. $\chi^0_h$ per hivern (2021-22 a 2024-25),
+quocient $R=\chi_h/\chi_c$ i set proves de robustesa (llindar, Nadal, desembre-febrer, efectes hivern × mes,
+memòria de 6 dies, CP sense salts). Lectura: si $\chi_h$ creix, electrificació de la calefacció; si no,
+la tendència d'estiu és específica de la refrigeració.
+
+**Test de fronts (histèresi).** $\gamma$ = resposta extra els dies que la temperatura baixa, amb una
+memòria additiva flexible (frontisses per retard). Calibratge sintètic (40 simulacions): falsos positius
+0 % (memòria lineal) i 3 % (resposta corbada); potència 100 % (histèresi d'1 K), 62 % (2 K), 10 % (3 K).
+La versió amb memòria lineal dona falsos positius si la resposta és corbada: no s'ha de fer servir.

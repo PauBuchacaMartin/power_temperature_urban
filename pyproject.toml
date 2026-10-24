@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "consum-temperatura"
-version = "0.1.0"
+version = "0.2.0"
 description = "Response of urban electricity consumption to temperature (article 1 of the thesis 'The city observed through its responses')"
 readme = "README.md"
 license = {text = "MIT"}

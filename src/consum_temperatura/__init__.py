@@ -9,6 +9,9 @@ from .response import (design_matrix, fit_cluster, prepare, static_susceptibilit
                        choose_tc, response_by_year, growth, threshold_factor, extensive_share)
 from .data import from_cache, era5_daily, era5_hourly, daily_consumption
 from .alerts import band_regime, complete_days, level_jumps
+from .seasonal import (winter_label, christmas, prepare_winter, winter_design, fit_winter, choose_th,
+                       response_by_winter, asymmetry, falling_days, flexible_memory, hysteresis_test, summer_phase,
+                       response_by_phase)
 from . import synthetic
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
