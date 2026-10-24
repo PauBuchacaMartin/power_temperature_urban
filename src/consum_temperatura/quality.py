@@ -158,3 +158,27 @@ def sector_shares(daily, freq="Q"):
     d = daily.groupby(["data", "sector"])["kwh"].sum().unstack().fillna(0)
     p = d.groupby(d.index.to_period(freq)).sum()
     return 100 * p.div(p.sum(axis=1), axis=0)
+
+
+def summer_coverage(good_days, temp, tc, years, months=(6, 7, 8, 9)):
+    """Data-quality metric of each summer, computed WITHOUT looking at the response (v0.14, rule G3).
+
+    For every summer: the share of days that are usable (`good_days`) and the share of the summer's
+    cooling degree-days, CDD = max(T - tc, 0), that fall on usable days. The second one matters more:
+    the response is identified by the hot days, so losing ten cool days costs little and losing ten
+    hot days costs a lot.
+    Returns a DataFrame indexed by year with 'dies', 'frac_dies', 'frac_cdd'.
+    """
+    t = temp[temp["data"].dt.month.isin(months) & temp["data"].dt.year.isin(years)].copy()
+    t["cdd"] = np.maximum(t["tmean"] - tc, 0)
+    t["bo"] = t["data"].isin(pd.to_datetime(list(good_days)))
+    out = {}
+    for a, g in t.groupby(t["data"].dt.year):
+        out[a] = {"dies": int(g["bo"].sum()), "frac_dies": float(g["bo"].mean()),
+                  "frac_cdd": float(g.loc[g["bo"], "cdd"].sum() / g["cdd"].sum()) if g["cdd"].sum() > 0 else np.nan}
+    return pd.DataFrame(out).T
+
+
+def quality_rule(coverage, min_cdd=0.90):
+    """Years that pass the written rule: at least `min_cdd` of the summer's CDD on usable days."""
+    return [int(a) for a, r in coverage.iterrows() if r["frac_cdd"] >= min_cdd]

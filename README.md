@@ -62,7 +62,7 @@ See `notebooks/exemple_dades_sintetiques.ipynb` (opens in Colab).
 | `src/consum_temperatura/seasonal.py` | Cold branch (heating degree days, symmetry of the V) and the hysteresis (fronts) test |
 | `src/consum_temperatura/figstyle.py` | One validated colour style for every article figure |
 | `tests/` | Every estimator must recover known parameters on synthetic data |
-| `notebooks/` | The article notebook (v0.13, lean), the full exploratory archive (v0.12) and v0.11, the energy-certificate pilot (v0.2) and an example |
+| `notebooks/` | The article notebook (v0.14, answer to the external review; v0.13 lean version), the full exploratory archive (v0.12) and v0.11, the energy-certificate pilot (v0.2) and an example |
 | `docs/article1.md` | State of article 1: results, data alerts, what is and is not established |
 
 ## Rules of this repository
@@ -74,7 +74,7 @@ See `notebooks/exemple_dades_sintetiques.ipynb` (opens in Colab).
 ## En català
 
 Aquest repositori conté el codi del primer article de la tesi: la resposta del consum elèctric
-de Barcelona a la calor. El notebook de l'article és `notebooks/resposta_calor_bcn_v13.ipynb` (l'arxiu complet, `resposta_calor_bcn_v12.ipynb`) i
+de Barcelona a la calor. El notebook de l'article és `notebooks/resposta_calor_bcn_v14.ipynb` (la predicció registrada del 2026 és a `docs/prediccio_2026.md`; l'arxiu complet, `resposta_calor_bcn_v12.ipynb`) i
 l'estat de l'article, a `docs/article1.md`. Les funcions del paquet són les mateixes del
 notebook, netes i amb proves.
 

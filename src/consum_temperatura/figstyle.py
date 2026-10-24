@@ -9,7 +9,9 @@ INK = "#0b0b0b"
 INK_2 = "#52514e"
 GRID = "#e4e3df"
 CAT = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"]           # blau, taronja, aigua, groc (ordre fix)
-YEARS_RAMP = ["#86b6ef", "#5598e7", "#2a78d6", "#1c5cab", "#104281"]   # rampa ordinal de blaus
+YEARS_RAMP = ["#a9cbf3", "#5f9de6", "#2a78d6", "#174f96", "#0a2c5a"]   # rampa ordinal de blaus
+# v0.14: passos de lluminositat més grans (el 2022 i el 2023 no es distingien en blanc i negre)
+EXCLUDED = dict(color="#9a9893", ls=":", marker="o", mfc="none")   # estil d'un any fora de la regla de qualitat
 
 
 def year_colors(years):

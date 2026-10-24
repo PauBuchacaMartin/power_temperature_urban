@@ -148,29 +148,34 @@ def growth(beta, cov, y0, y1, lags=3, prefix="cdd"):
     return d, se
 
 
-def threshold_factor(curves, errors, ref=None, max_iter=200):
+def threshold_factor(curves, errors, ref=None, max_iter=500):
     """Common shape x factor per year: curves[b, year] ~ g(b) * lambda(year), lambda(ref) = 1.
 
     curves, errors: DataFrames (index = temperature bins above the threshold, columns = years).
     Weighted alternating least squares, as in section 22k of notebook v0.12.1 (20k in v0.11).
+    v0.14: cells with a missing value or a non-positive / missing error get zero weight (this
+    happens in bootstrap samples where a hot bin is empty in one summer).
     Returns (lambda Series, se Series, shape g Series, chi2, dof).
     """
-    y, s = curves, errors
+    s = errors.reindex_like(curves)
+    ok = curves.notna() & s.notna() & (s > 0)
+    W = (1.0 / s.where(ok) ** 2).fillna(0.0)
+    y = curves.where(ok).fillna(0.0)
     ref = y.columns[0] if ref is None else ref
     lam = pd.Series(1.0, index=y.columns)
     for _ in range(max_iter):
-        g = (y * lam / s ** 2).sum(axis=1) / ((lam ** 2) / s ** 2).sum(axis=1)
-        new = (y.mul(g, axis=0) / s ** 2).sum() / ((s ** -2).mul(g ** 2, axis=0)).sum()
+        g = (y * W * lam).sum(axis=1) / (W * lam ** 2).sum(axis=1)
+        new = (y * W).mul(g, axis=0).sum() / W.mul(g ** 2, axis=0).sum()
         new = new / new[ref]
         if np.allclose(new, lam, atol=1e-10):
             lam = new
             break
         lam = new
-    g = (y * lam / s ** 2).sum(axis=1) / ((lam ** 2) / s ** 2).sum(axis=1)
+    g = (y * W * lam).sum(axis=1) / (W * lam ** 2).sum(axis=1)
     pred = pd.DataFrame(np.outer(g, lam), index=y.index, columns=y.columns)
-    chi2 = float((((y - pred) / s) ** 2).sum().sum())
-    dof = int(y.notna().sum().sum()) - len(y.index) - (len(y.columns) - 1)
-    se = 1 / np.sqrt(((s ** -2).mul(g ** 2, axis=0)).sum())
+    chi2 = float((((y - pred) ** 2) * W).sum().sum())
+    dof = int(ok.sum().sum()) - len(y.index) - (len(y.columns) - 1)
+    se = 1 / np.sqrt(W.mul(g ** 2, axis=0).sum())
     return lam, se, g, chi2, dof
 
 
@@ -233,12 +238,14 @@ def heatwave_residuals(consumption, temp, tc, waves, lags=3, years=None, holiday
 
 
 def response_curves(consumption, temp, years, holidays=(), bins=range(21, 29), floor=20, window=3,
-                    months=(6, 7, 8, 9), exclude=None):
+                    months=(6, 7, 8, 9), exclude=None, min_ref=1):
     """Non-parametric response curve of each summer (no imposed shape).
 
     Regressors: indicators of 1 °C bins of the `window`-day mean temperature (≤ floor is the
     reference; the last bin collects everything above), one set per summer, plus year, ISO week,
-    weekday and holiday effects. Returns (curves, errors) in log units ×100 (≈ % above the
+    weekday and holiday effects. Each summer's curve is anchored on its own reference days (only
+    ~10 per summer in Barcelona): a summer with fewer than `min_ref` of them raises ValueError
+    (its curve is not identified; the bootstrap counts it as a failed replicate). Returns (curves, errors) in log units ×100 (≈ % above the
     reference), index = bins, columns = years.
     """
     bins = list(bins)
@@ -249,6 +256,9 @@ def response_curves(consumption, temp, years, holidays=(), bins=range(21, 29), f
     if exclude is not None:
         t = t[~t["data"].isin(pd.to_datetime(list(exclude)))].reset_index(drop=True)
     t["bin"] = np.clip(np.floor(t["tm"]), floor, bins[-1]).astype(int)
+    nref = t[t["bin"] == floor].groupby(t["data"].dt.year).size().reindex(list(years), fill_value=0)
+    if (nref < min_ref).any():
+        raise ValueError(f"reference bin (<= {floor} °C) with too few days: {nref.to_dict()}")
     cat = lambda v, c: pd.Categorical(v, categories=c)
     hol = pd.to_datetime(pd.Series(list(holidays))) if len(holidays) else pd.Series([], dtype="datetime64[ns]")
     parts = [pd.get_dummies(pd.DataFrame({

@@ -10,13 +10,16 @@ from .response import (design_matrix, fit_cluster, prepare, static_susceptibilit
                        absolute_response_by_year, heatwave_residuals, response_curves, curves_equal,
                        correlation_check, slope_over_years)
 from .quality import (city_series, temperature_residuals, anomalies, extreme_days, clean_days,
-                      anomaly_blocks, sector_shares)
-from .daynight import day_night_forcings, day_night_response, day_night_summary
-from .data import from_cache, era5_daily, era5_hourly, daily_consumption
+                      anomaly_blocks, sector_shares, summer_coverage, quality_rule)
+from .daynight import (day_night_forcings, day_night_response, day_night_summary, day_night_difference,
+                       radiation_regressors)
+from .data import (from_cache, era5_daily, era5_hourly, daily_consumption, era5_radiation, xema_daily, station_temperature,
+                   XEMA_STATIONS, XEMA_CITY, XEMA_URL)
+from .bootstrap import resample_weeks, block_bootstrap, percentile_interval
 from .alerts import band_regime, complete_days, level_jumps
 from .seasonal import (winter_label, christmas, prepare_winter, winter_design, fit_winter, choose_th,
                        response_by_winter, asymmetry, falling_days, flexible_memory, hysteresis_test, summer_phase,
                        response_by_phase)
 from . import synthetic, figstyle
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"

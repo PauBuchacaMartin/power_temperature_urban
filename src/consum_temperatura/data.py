@@ -5,6 +5,7 @@ server outage or rate limit does not stop the analysis. Delete a file to force
 a fresh download.
 """
 import os
+import numpy as np
 import pandas as pd
 
 
@@ -53,6 +54,18 @@ def era5_hourly(lat, lon, start, end, timeout=180):
                          "blh": h.get("boundary_layer_height")})
 
 
+def era5_radiation(lat, lon, start, end, timeout=120):
+    """Daily ERA5 shortwave radiation sum (MJ m-2) from Open-Meteo: control for rooftop PV (v0.14)."""
+    import requests
+    url = ("https://archive-api.open-meteo.com/v1/archive"
+           f"?latitude={lat}&longitude={lon}&start_date={start}&end_date={end}"
+           "&daily=shortwave_radiation_sum&timezone=Europe%2FMadrid")
+    r = requests.get(url, timeout=timeout)
+    r.raise_for_status()
+    d = r.json()["daily"]
+    return pd.DataFrame({"data": pd.to_datetime(d["time"]), "rad": d["shortwave_radiation_sum"]})
+
+
 def find_column(df, words):
     """First column whose normalised name contains any of `words` (robust to portal renamings)."""
     for c in df.columns:
@@ -92,3 +105,55 @@ def daily_consumption(raw):
     if n_dup:
         print(f"[i] Files duplicades eliminades: {n_dup}")
     return d.drop_duplicates(keys)[keys + ["kwh"]].reset_index(drop=True)
+
+
+# ---------------------------------------------------------------------------
+# Meteocat (XEMA) stations: an independent temperature for the robustness test of v0.14
+# ---------------------------------------------------------------------------
+# code -> (name, lat, lon, altitude m). Source: XEMA metadata (Generalitat dataset yqwd-vj5e).
+XEMA_STATIONS = {
+    "X4": ("Barcelona - el Raval", 41.38386, 2.16774, 33),
+    "X8": ("Barcelona - Zona Universitària", 41.37922, 2.10537, 82),
+    "WU": ("Badalona - Museu", 41.45215, 2.24757, 42),
+    "D5": ("Barcelona - Observatori Fabra", 41.41864, 2.12379, 410),   # Collserola: reference only
+}
+XEMA_CITY = ["X4", "X8", "WU"]
+XEMA_URL = "https://analisi.transparenciacatalunya.cat/resource/7bvh-jvq2.csv"   # daily XEMA data
+XEMA_VARS = {1000: "tmean", 1001: "tmax"}
+
+
+def xema_daily(raw):
+    """Long XEMA file (codi_estacio, data_lectura, codi_variable, valor) -> one row per station and day."""
+    x = raw.copy()
+    x["data"] = pd.to_datetime(x["data_lectura"]).dt.normalize()
+    x["var"] = x["codi_variable"].astype(int).map(XEMA_VARS)
+    x["valor"] = pd.to_numeric(x["valor"], errors="coerce")
+    return (x.dropna(subset=["var"]).pivot_table(index=["data", "codi_estacio"], columns="var", values="valor")
+             .reset_index().rename(columns={"codi_estacio": "estacio"}))
+
+
+def _dist_km(lat1, lon1, lat2, lon2):
+    kx = 111.32 * np.cos(np.radians((lat1 + lat2) / 2))     # flat distance, good enough at city scale
+    return np.hypot((lon1 - lon2) * kx, (lat1 - lat2) * 110.57)
+
+
+def station_temperature(stations, lat, lon, fallback=None, codes=XEMA_CITY, power=2, min_km=0.3):
+    """Inverse-distance-weighted station temperature at (lat, lon), as in notebook v0.11/v0.12.
+
+    stations: output of xema_daily (data, estacio, tmean, tmax). fallback: optional daily DataFrame
+    (data, tmean, tmax), e.g. ERA5; days with no station data take fallback + its mean offset.
+    Returns (DataFrame data/tmean/tmax, normalised weights).
+    """
+    d = np.array([_dist_km(lat, lon, XEMA_STATIONS[c][1], XEMA_STATIONS[c][2]) for c in codes])
+    w = 1.0 / np.maximum(d, min_km) ** power
+    days = (fallback["data"] if fallback is not None else pd.Series(sorted(stations["data"].unique())))
+    out = pd.DataFrame({"data": pd.to_datetime(days).values})
+    for var in ["tmean", "tmax"]:
+        tw = stations.pivot(index="data", columns="estacio", values=var).reindex(columns=list(codes)).reindex(out["data"])
+        W = pd.DataFrame(np.tile(w, (len(tw), 1)), index=tw.index, columns=list(codes)).where(tw.notna())
+        v = ((tw * W).sum(axis=1) / W.sum(axis=1)).values           # NaN if no station has data
+        if fallback is not None:
+            f = fallback[var].values
+            v = np.where(np.isnan(v), f + np.nanmean(v - f), v)
+        out[var] = v
+    return out, w / w.sum()
