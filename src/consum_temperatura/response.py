@@ -116,7 +116,7 @@ def choose_tc(consumption, temp, candidates=np.arange(18.0, 25.5, 0.5), lags=3, 
 def response_by_year(consumption, temp, tc, lags=3, years=None, holidays=(), exclude=None, **kw):
     """chi0 for each summer (CDD x year interaction) and growth between two years.
 
-    exclude: iterable of dates to drop (e.g. heatwave days, as in section 20d of the notebook).
+    exclude: iterable of dates to drop (e.g. heatwave days, as in section 22d of notebook v0.12.1).
     """
     table = prepare(consumption, temp, tc, lags, years=years, **kw)
     if exclude is not None:
@@ -148,7 +148,7 @@ def threshold_factor(curves, errors, ref=None, max_iter=200):
     """Common shape x factor per year: curves[b, year] ~ g(b) * lambda(year), lambda(ref) = 1.
 
     curves, errors: DataFrames (index = temperature bins above the threshold, columns = years).
-    Weighted alternating least squares, as in section 20k of the v0.11 notebook.
+    Weighted alternating least squares, as in section 22k of notebook v0.12.1 (20k in v0.11).
     Returns (lambda Series, se Series, shape g Series, chi2, dof).
     """
     y, s = curves, errors
