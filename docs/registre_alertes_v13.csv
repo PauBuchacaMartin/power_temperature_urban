@@ -1,0 +1,8 @@
+alerta,què,abast,tractament
+1,"Recodificació de CP (tardor 2023, juliol 2025)",per CP; no a la ciutat,tot a escala de ciutat; creixement 2021→2024; el 2025 només com a robustesa
+2,Canvi del repartiment entre franges (2024-25),494 dies,R4 només amb dies del règim A (principal) i amb variable de règim (secundari); sense 2025
+3,Forat de cobertura dels serveis (gen.-mar. 2023),158 dies de serveis,exclòs pel detector de blocs; també el del residencial de principis de gener
+4,Reclassificacions de sector (ago. 2023; set. 2025),serveis i indústria,prova de composició amb el total de tots els sectors
+5,Dies dolents i bloc d'agost del 2025,25 dies del residencial,detector condicionat a la temperatura; els dies extrems mai s'exclouen
+6,"Unitats: el portal diu MWh, són kWh",—,comprovació de l'ordre de magnitud (secció 3)
+7,Sense validació externa del total,—,limitació declarada; demanar el total anual a l'Ajuntament o l'ICAEN

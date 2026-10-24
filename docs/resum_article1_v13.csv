@@ -1,0 +1,18 @@
+resultat,magnitud,valor,nota
+R1,Tc (°C),20.0,
+R1,χ⁰ tots els estius (%/K),6.32 ± 0.29,χ⁰ per correlacions 6.37
+R1,"Residu d'onada, χ de cada estiu (%)",+3.0,11 dies; dispersió normal ±4.1 %; poca potència
+R2,χ⁰ 2021 → 2024 (%/K),4.32 → 7.20,
+R2,Creixement 2021→2024 (%/K),+2.88 ± 0.35,z = 8.2
+R2,"Creixement, tots els sectors (%/K)",+2.29 ± 0.41,prova de composició
+R2,Resposta absoluta total 2021 → 2024 (MWh/dia/K),535 → 931,
+R2,Proves de robustesa amb z > 2,11 de 12,juny + setembre: no s'espera
+R3,Pre-especificat: iguals < 24 °C (p) / forma × factor ≥ 24 °C (p),0.00 / 0.07,la part < 24 °C falla (2025)
+R3,Forma × factor a tota la corba 21-28 °C (p),0.18,post hoc · λ2024 = 1.84 ± 0.04
+R4,0-6 h: resposta a la calor de nit / de dia (%/K),5.22 / 1.96,règim A
+R4,0-6 h: canvi de la resposta a la nit / al dia,+4.31 ± 0.88 / +0.27 ± 0.82,
+R4,Franges amb canvi a la nit z > 2 / al dia z > 2,4 / 0 de 4,règim A
+R5,"χ_h nivell (%/K), Th","3.69 ± 0.21, 15.5 °C",
+R5,Canvi de χ_h (3 versions),+1.43 / +0.06 / -0.29,robust només si les tres coincideixen
+R6,γ histèresi (base),-0.076 ± 0.133,màx |z| = 0.8
+—,∂Q_F/∂T total 2024 (W m⁻² K⁻¹),0.38,G no verificat

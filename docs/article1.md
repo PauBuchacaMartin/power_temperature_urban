@@ -1,73 +1,75 @@
-# Article 1: la resposta energètica de Barcelona
+# Article 1 · resultats de la versió depurada (notebook v0.13, 24/10/2026)
 
-*Estat a 23/10/2026. Font: `10_estat_actual_i_decisions.md` del projecte de tesi i notebook v0.11.*
+Notebook: `notebooks/resposta_calor_bcn_v13.ipynb` (13 seccions, només el que és publicable).
+Arxiu complet amb totes les anàlisis exploratòries: `notebooks/resposta_calor_bcn_v12.ipynb`.
+Executat amb les dades d'Open Data BCN · Datadis fins al 30/11/2025 i ERA5. Escala de ciutat (42 CP).
 
-## Pregunta
+## Afirmacions de l'article
 
-Com respon el consum elèctric de Barcelona a la calor, per què aquesta resposta creix cada any
-i sobretot de nit, i quina part del creixement ve de tenir més aparells d'aire condicionat
-(marge extensiu) i quina d'usar-los més (marge intensiu)?
-
-## Dades
-
-- Consum elèctric diari i per franges de 6 h, per codi postal i sector (Datadis via Open Data BCN), 2021–2025.
-- Temperatura ERA5 (Open-Meteo), diària i horària, amb l'alçada de la capa límit; estacions del Meteocat.
-- Certificats energètics de la Generalitat (registre `j6ii-t3w2` i instal·lacions `cmnw-duhh`) per als equips de fred.
-
-## Resultats que aguanten (v0.11)
-
-| Resultat | Valor | Notes |
+| # | Afirmació | Estat |
 |---|---|---|
-| Creixement de χ⁰ de la ciutat, 2021→2024 | +2,78 ± 0,35 %/K | Errors per clústers de setmana |
-| Factor de resposta λ (2021 = 1) | 1,00 · 1,25 · 1,56 · 1,83 · 1,76 (2021–2025) | Model de llindars: forma comuna per sobre de 24 °C (p = 0,17) |
-| Creixement de la resposta a la calor nocturna (franja 0–6 h) | +5,7 ± 0,8 | En unitats del model del v0.11 |
-| Creixement de la resposta a la calor diürna | +0,4 ± 1,1 | No significatiu |
-| Creixement per franja, només règim A | vespre 4,2 · nit 3,2 · tarda 2,6 · matí 2,0 | Control del canvi de règim de franges |
-| Capa límit (mediana ERA5, estius) | ~117 m de nit, ~696 m de dia | La calor nocturna es concentra en una capa ~6 vegades més prima |
-| Pisos anteriors a 1980 amb fred declarat | 45,6 → 49,9 % (def. A); 28,8 → 35,2 % (def. B), 2021→2024 | Pilot de certificats |
-| Part del creixement de λ explicada per més aparells | 13–42 % (escala log) | Model mínim χ ∝ aparells × ús |
-| Validació creuada de la def. B | 31,0 % (certificats, 2020) vs 30,8 % (anuncis de Habitaclia, març 2020) | Rojas-Quiroz i Marmolejo 2026, *Urban Science* |
+| R1 | La ciutat respon a la calor amb ~6 % de consum residencial per grau, amb memòria d'1-2 dies; la resposta lineal prediu les onades | Sòlid (regressió = correlacions). Residu d'onada +3 % amb 11 dies: sense saturació; possible amplificació petita, no concloent |
+| R2 | La resposta creix de 4,3 a 7,2 %/K entre el 2021 i el 2024 | Sòlid: 11 de 12 proves amb z > 2; també amb tots els sectors sumats (composició) i en absolut (535 → 931 MWh/dia per K, tots els sectors). Només juny + setembre no creix: el creixement és als mesos calents |
+| R3 | El creixement és un canvi d'amplitud amb la mateixa forma de corba (model de llindars), λ = 1,00 / 1,27 / 1,54 / 1,84 / 1,83 | Test de tota la corba p = 0,18 (*post hoc*). El test pre-especificat falla a la part < 24 °C (p = 0,00, per culpa del 2025) i passa a la part ≥ 24 °C (p = 0,07) |
+| R4 | La resposta que creix és la de la calor de nit, a les quatre franges horàries; la de la calor de dia no creix a cap | Sòlid amb només dies del règim A (alerta 2): 0-6 h nit +4,3 ± 0,9 vs dia +0,3 ± 0,8 %/K |
+| R5 | Fred: resposta estable (3,7 ± 0,2 %/K per sota de 15,5 °C); la V es fa menys simètrica (R = χ_h/χ_c de ~0,7 a ~0,45-0,6) | El canvi de χ_h no és robust (+1,4 / +0,1 / −0,3 segons la versió); la caiguda de R sí que es veu a les tres versions |
+| R6 | No hi ha histèresi estreta (test de fronts) | Sòlid: |z| < 0,8 a totes les versions |
+| — | Sensibilitat de la calor antropogènica de tota la ciutat: ∂Q_F/∂T = 0,22 → 0,38 W m⁻² K⁻¹ (2021 → 2024) | Mesurat (àrea dels CP reconstruïda); G = 0,008-0,04 només com a ordre de magnitud (h_eff no verificat) |
 
-Proves superades (secció 20h del v0.11): la tendència no l'expliquen l'autoconsum fotovoltaic,
-el vehicle elèctric, el preu ni l'any de la COVID. Només falla la prova amb juny i setembre sols.
+## Taula de resultats (sortida automàtica de la secció 13)
 
-## Alertes de dades
+| resultat   | magnitud                                                         | valor                       | nota                                            |
+|:-----------|:-----------------------------------------------------------------|:----------------------------|:------------------------------------------------|
+| R1         | Tc (°C)                                                          | 20.0                        | nan                                             |
+| R1         | χ⁰ tots els estius (%/K)                                         | 6.32 ± 0.29                 | χ⁰ per correlacions 6.37                        |
+| R1         | Residu d'onada, χ de cada estiu (%)                              | +3.0                        | 11 dies; dispersió normal ±4.1 %; poca potència |
+| R2         | χ⁰ 2021 → 2024 (%/K)                                             | 4.32 → 7.20                 | nan                                             |
+| R2         | Creixement 2021→2024 (%/K)                                       | +2.88 ± 0.35                | z = 8.2                                         |
+| R2         | Creixement, tots els sectors (%/K)                               | +2.29 ± 0.41                | prova de composició                             |
+| R2         | Resposta absoluta total 2021 → 2024 (MWh/dia/K)                  | 535 → 931                   | nan                                             |
+| R2         | Proves de robustesa amb z > 2                                    | 11 de 12                    | juny + setembre: no s'espera                    |
+| R3         | Pre-especificat: iguals < 24 °C (p) / forma × factor ≥ 24 °C (p) | 0.00 / 0.07                 | la part < 24 °C falla (2025)                    |
+| R3         | Forma × factor a tota la corba 21-28 °C (p)                      | 0.18                        | post hoc · λ2024 = 1.84 ± 0.04                  |
+| R4         | 0-6 h: resposta a la calor de nit / de dia (%/K)                 | 5.22 / 1.96                 | règim A                                         |
+| R4         | 0-6 h: canvi de la resposta a la nit / al dia                    | +4.31 ± 0.88 / +0.27 ± 0.82 | nan                                             |
+| R4         | Franges amb canvi a la nit z > 2 / al dia z > 2                  | 4 / 0 de 4                  | règim A                                         |
+| R5         | χ_h nivell (%/K), Th                                             | 3.69 ± 0.21, 15.5 °C        | nan                                             |
+| R5         | Canvi de χ_h (3 versions)                                        | +1.43 / +0.06 / -0.29       | robust només si les tres coincideixen           |
+| R6         | γ histèresi (base)                                               | -0.076 ± 0.133              | màx |z| = 0.8                                   |
+| —          | ∂Q_F/∂T total 2024 (W m⁻² K⁻¹)                                   | 0.38                        | G no verificat                                  |
 
-1. **Recodificació de codis postals (juliol 2025):** ~17 % del consum residencial i ~19 % del de serveis
-   canvien de codi postal; suma zero a escala de ciutat (08037 multiplica per 15). Per això la sèrie
-   de ciutat inclou tots els codis i les anàlisis per codi postal fan servir 2021–2024.
-2. **Canvi de règim de les franges horàries (des del 2024):** la fracció de consum de 18–24 h cau
-   respecte de la climatologia 2021–2023. Es controla amb `alerts.band_regime` (llindar −2,5 punts).
-3. 08007, 08009 i 08011 desapareixen de les dades a partir del juny 2025: pendent d'investigar.
+## Registre d'alertes de la font (secció 4)
 
-## Retirat o no utilitzable
+|   alerta | què                                                | abast                   | tractament                                                                                |
+|---------:|:---------------------------------------------------|:------------------------|:------------------------------------------------------------------------------------------|
+|        1 | Recodificació de CP (tardor 2023, juliol 2025)     | per CP; no a la ciutat  | tot a escala de ciutat; creixement 2021→2024; el 2025 només com a robustesa               |
+|        2 | Canvi del repartiment entre franges (2024-25)      | 494 dies                | R4 només amb dies del règim A (principal) i amb variable de règim (secundari); sense 2025 |
+|        3 | Forat de cobertura dels serveis (gen.-mar. 2023)   | 158 dies de serveis     | exclòs pel detector de blocs; també el del residencial de principis de gener              |
+|        4 | Reclassificacions de sector (ago. 2023; set. 2025) | serveis i indústria     | prova de composició amb el total de tots els sectors                                      |
+|        5 | Dies dolents i bloc d'agost del 2025               | 25 dies del residencial | detector condicionat a la temperatura; els dies extrems mai s'exclouen                    |
+|        6 | Unitats: el portal diu MWh, són kWh                | —                       | comprovació de l'ordre de magnitud (secció 3)                                             |
+|        7 | Sense validació externa del total                  | —                       | limitació declarada; demanar el total anual a l'Ajuntament o l'ICAEN                      |
 
-- La correlació de 23f amb la calor antropogènica (ρ = 0,53) era un artefacte de les dades del 2025 (ρ = −0,11 amb 2023–24).
-- El desplaçament de l'hora punta de 23d (18 min/K) era sobretot un artefacte del canvi de règim; amb control, 11 min/K, sense explicar.
+## Figures (`docs/figures_v13/`)
 
-## Pendent per tancar l'article
+| Fitxer | Contingut |
+|---|---|
+| `fig1_response_function.png` | a) Funció de resposta χ(k); b) dies d'onada predits per la resposta lineal |
+| `fig2_trend_robustness.png` | a) χ⁰ per estiu (residencial i tots els sectors); b) creixement 2021→2024 a cada prova de robustesa |
+| `fig3_curves_threshold_model.png` | a) Corba de resposta de cada estiu sense forma imposada; b) amplitud λ de cada estiu |
+| `fig4_day_night.png` | a) Resposta de cada franja a la calor de dia i de nit; b) canvi 2021→2024 |
+| `fig5_cold_symmetry.png` | a) Resposta al fred per hivern (tres versions); b) simetria de la V |
+| `auditoria_sectors.png` | Consum diari de tota la ciutat per sector: forats i reclassificacions de la font |
 
-- [x] Branca de fred (graus-dia de calefacció) per hivern i simetria de la V: `seasonal.py`, notebook v0.12 secció 24 (pendent d'executar amb dades reals).
-- [ ] Preu estimat conjuntament amb la calor i el fred.
-- [x] Test d'histèresi (test de fronts amb memòria flexible): `seasonal.py`, notebook v0.12 secció 25 (pendent d'executar amb dades reals).
-- [ ] Intervals de confiança per bootstrap per a la part extensiva.
-- [ ] Contrast de l'equipament amb una enquesta independent de llars.
-- [ ] Proposar l'estructura a l'AiEM (coautors).
+## Decisions post hoc (declarades)
 
-## Referències de context (al radar de la tesi)
+- Hivern desembre-febrer (24/10/2026), triat després de veure que novembre i març dominaven el canvi de χ_h.
+- Model de llindars a tota la corba (24/10/2026), afegit després de veure que la part < 24 °C del test pre-especificat fallava.
+- Comparacions per CP dins de cada any (14/10/2026): fora d'aquest notebook.
 
-Auffhammer i Mansur 2014; Davis i Gertler 2015; Wenz, Levermann i Auffhammer 2017;
-Moral-Carcedo i Vicéns-Otero 2005; Salvati, Coch i Cecere 2017; De Cian, Falchetta et al. 2025 (*JEEM*).
+## Pendent per enviar l'article
 
-## v0.12 (24/10/2026): fred i histèresi
-
-**Branca de fred.** Model d'hivern (novembre-març) amb graus-dia de calefacció i efectes fixos d'hivern,
-setmana ISO (absorbeix el cicle de la llum), dia, festiu i Nadal. $\chi^0_h$ per hivern (2021-22 a 2024-25),
-quocient $R=\chi_h/\chi_c$ i set proves de robustesa (llindar, Nadal, desembre-febrer, efectes hivern × mes,
-memòria de 6 dies, CP sense salts). Lectura: si $\chi_h$ creix, electrificació de la calefacció; si no,
-la tendència d'estiu és específica de la refrigeració.
-
-**Test de fronts (histèresi).** $\gamma$ = resposta extra els dies que la temperatura baixa, amb una
-memòria additiva flexible (frontisses per retard). Calibratge sintètic (40 simulacions): falsos positius
-0 % (memòria lineal) i 3 % (resposta corbada); potència 100 % (histèresi d'1 K), 62 % (2 K), 10 % (3 K).
-La versió amb memòria lineal dona falsos positius si la resposta és corbada: no s'ha de fer servir.
+- [ ] Validació externa del total anual de consum (Ajuntament / ICAEN) i correu a Open Data BCN amb les incidències.
+- [ ] Executar la v0.13 a Colab amb humitat i preu (memòria cau a `dades_tesi`) i confirmar R2.
+- [ ] Penetració d'aire condicionat (sèrie temporal independent) per separar aparells i ús (pilot CEE: 13-42 %).
+- [ ] Estructura de l'article amb l'AiEM (coautors).

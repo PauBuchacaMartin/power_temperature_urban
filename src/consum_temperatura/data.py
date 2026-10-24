@@ -81,6 +81,14 @@ def daily_consumption(raw):
         ren[col_band] = "tram"
     d = raw.rename(columns=ren)
     d["data"] = pd.to_datetime(d["data"])
-    d["cp"] = d["cp"].astype(str).str.extract(r"(\d{5})")[0]
+    # El portal pot donar el CP com a text "08001" o com a número 8001: el normalitzem a 5 xifres
+    d["cp"] = d["cp"].astype(str).str.extract(r"(\d{4,5})")[0].str.zfill(5)
     keys = [k for k in ["data", "cp", "sector", "tram"] if k in d.columns]
-    return d.groupby(keys, as_index=False)["kwh"].sum()
+    d["kwh"] = pd.to_numeric(d["kwh"].astype(str).str.replace(",", "."), errors="coerce")
+    d = d.dropna(subset=["data", "cp", "kwh"])
+    # Files repetides (mateix dia, CP, sector i franja): el portal en té algunes. Si se sumessin,
+    # aquell dia sortiria doblat; ens quedem amb la primera (com els notebooks des de la v0.2.3).
+    n_dup = int(d.duplicated(keys).sum())
+    if n_dup:
+        print(f"[i] Files duplicades eliminades: {n_dup}")
+    return d.drop_duplicates(keys)[keys + ["kwh"]].reset_index(drop=True)
