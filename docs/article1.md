@@ -1,15 +1,15 @@
-# Article 1 · resultats de la versió depurada (notebook v0.13, 24/10/2026)
+# Article 1 · resultats de la versió depurada (notebook v0.13, executat a Colab el 24/10/2026)
 
 Notebook: `notebooks/resposta_calor_bcn_v13.ipynb` (13 seccions, només el que és publicable).
 Arxiu complet amb totes les anàlisis exploratòries: `notebooks/resposta_calor_bcn_v12.ipynb`.
-Executat amb les dades d'Open Data BCN · Datadis fins al 30/11/2025 i ERA5. Escala de ciutat (42 CP).
+Executat a Colab amb les dades d'Open Data BCN · Datadis fins al 30/11/2025 i ERA5; reproduït exactament en local. Escala de ciutat (42 CP).
 
 ## Afirmacions de l'article
 
 | # | Afirmació | Estat |
 |---|---|---|
 | R1 | La ciutat respon a la calor amb ~6 % de consum residencial per grau, amb memòria d'1-2 dies; la resposta lineal prediu les onades | Sòlid (regressió = correlacions). Residu d'onada +3 % amb 11 dies: sense saturació; possible amplificació petita, no concloent |
-| R2 | La resposta creix de 4,3 a 7,2 %/K entre el 2021 i el 2024 | Sòlid: 11 de 12 proves amb z > 2; també amb tots els sectors sumats (composició) i en absolut (535 → 931 MWh/dia per K, tots els sectors). Només juny + setembre no creix: el creixement és als mesos calents |
+| R2 | La resposta creix de 4,3 a 7,2 %/K entre el 2021 i el 2024 | Sòlid: 13 de 14 proves amb z > 2 (a Colab, amb humitat ≈ +2,5 i preu ≈ +2,9 %/K, valors llegits de la figura 2; els exactes surten a `r2_robustesa.csv` des de la v0.13.1); també amb tots els sectors sumats (composició) i en absolut (535 → 931 MWh/dia per K, tots els sectors). Només juny + setembre no creix: el creixement és als mesos calents |
 | R3 | El creixement és un canvi d'amplitud amb la mateixa forma de corba (model de llindars), λ = 1,00 / 1,27 / 1,54 / 1,84 / 1,83 | Test de tota la corba p = 0,18 (*post hoc*). El test pre-especificat falla a la part < 24 °C (p = 0,00, per culpa del 2025) i passa a la part ≥ 24 °C (p = 0,07) |
 | R4 | La resposta que creix és la de la calor de nit, a les quatre franges horàries; la de la calor de dia no creix a cap | Sòlid amb només dies del règim A (alerta 2): 0-6 h nit +4,3 ± 0,9 vs dia +0,3 ± 0,8 %/K |
 | R5 | Fred: resposta estable (3,7 ± 0,2 %/K per sota de 15,5 °C); la V es fa menys simètrica (R = χ_h/χ_c de ~0,7 a ~0,45-0,6) | El canvi de χ_h no és robust (+1,4 / +0,1 / −0,3 segons la versió); la caiguda de R sí que es veu a les tres versions |
@@ -70,6 +70,7 @@ Executat amb les dades d'Open Data BCN · Datadis fins al 30/11/2025 i ERA5. Esc
 ## Pendent per enviar l'article
 
 - [ ] Validació externa del total anual de consum (Ajuntament / ICAEN) i correu a Open Data BCN amb les incidències.
-- [ ] Executar la v0.13 a Colab amb humitat i preu (memòria cau a `dades_tesi`) i confirmar R2.
+- [x] v0.13 executada a Colab (24/10): resultats idèntics a l'execució local; humitat i preu no expliquen el creixement.
+- [ ] Tornar a executar la v0.13.1 per tenir totes les taules en CSV (números exactes per a l'article).
 - [ ] Penetració d'aire condicionat (sèrie temporal independent) per separar aparells i ús (pilot CEE: 13-42 %).
 - [ ] Estructura de l'article amb l'AiEM (coautors).
