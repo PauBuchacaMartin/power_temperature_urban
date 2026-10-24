@@ -67,10 +67,27 @@ Executat a Colab amb les dades d'Open Data BCN · Datadis fins al 30/11/2025 i E
 - Model de llindars a tota la corba (24/10/2026), afegit després de veure que la part < 24 °C del test pre-especificat fallava.
 - Comparacions per CP dins de cada any (14/10/2026): fora d'aquest notebook.
 
+## Límits tècnics abans d'enviar l'article (per a la reunió de dilluns amb l'Aleix)
+
+**Missatge per a la reunió:** els resultats són sòlids per explicar-los i discutir l'article; **encara no estan a punt per enviar-los**. Falten cinc punts tècnics que un àrbitre demanaria. Totes les peces existeixen; és una v0.14 de mida petita. Proposta: fer-la després de la reunió, perquè l'Aleix pot canviar les prioritats.
+
+| # | Límit | Per què importa | Què cal fer (v0.14) | Pregunta per a l'Aleix |
+|---|---|---|---|---|
+| 1 | **Incertesa del llindar $T_c$** | $T_c$ s'estima amb les mateixes dades i el creixement en depèn molt (+2,3 a +5,5 %/K entre 18 i 23 °C). L'interval actual no inclou aquesta incertesa | *Bootstrap* per blocs de setmanes que refaci la tria de $T_c$ a cada rèplica; o presentar λ (que no depèn del llindar) com a mesura principal | Prefereix χ⁰ o λ com a resultat central? |
+| 2 | **Una sola sèrie de temperatura** (un punt d'ERA5) | Un àrbitre ho qüestionarà. La prova amb les estacions del Meteocat (+3,3 ± 0,3) es va fer a la v0.7-v0.12, però no és a la v0.13 | Recuperar-la a la v0.13 (`xema.csv` és al Drive) | Coneix una font de temperatura urbana millor? |
+| 3 | **Llindars dia–nit fixats a mà** (27 i 20 °C) | R4 podria dependre de la tria | Graella de sensibilitat (era a la v0.12) | — |
+| 4 | **2021 com a any de referència** (estiu amb restriccions de la covid) | El creixement 2021→2024 podria incloure un efecte covid | Posar el creixement 2022→2024 (+2,05 ± 0,29) i el pendent (+0,77 ± 0,10 %/K per any) com a proves explícites | Quin any de referència preferiria? |
+| 5 | **Marge extensiu fora del repositori** (els aparells nous expliquen un 13-42 % del creixement de λ) | Ve del notebook pilot de certificats, sense proves sintètiques | Passar-lo al paquet amb proves, si va a l'article | Entra a l'article 1 o es deixa per a P2? |
+
+**Fora del codi:** cap validació externa del consum total (cal el total anual de l'Ajuntament o l'ICAEN) i un correu a Open Data BCN amb les incidències de la font.
+
+**Com presentar-ho (proposta):** separar clarament el que és **sòlid** (R1, R2, R4, R6 i el nivell de R5) del que és **provisional o *post hoc*** (R3 a tota la corba, el canvi de χ_h, el residu d'onada) i del que **encara falta** (la taula anterior). Les alertes de la font són un punt fort de rigor, no una debilitat amagada: cal ensenyar-les.
+
 ## Pendent per enviar l'article
 
 - [ ] Validació externa del total anual de consum (Ajuntament / ICAEN) i correu a Open Data BCN amb les incidències.
 - [x] v0.13 executada a Colab (24/10): resultats idèntics a l'execució local; humitat i preu no expliquen el creixement.
 - [ ] Tornar a executar la v0.13.1 per tenir totes les taules en CSV (números exactes per a l'article).
+- [ ] v0.14 amb els cinc punts de la taula anterior (després de la reunió amb l'Aleix).
 - [ ] Penetració d'aire condicionat (sèrie temporal independent) per separar aparells i ús (pilot CEE: 13-42 %).
 - [ ] Estructura de l'article amb l'AiEM (coautors).
