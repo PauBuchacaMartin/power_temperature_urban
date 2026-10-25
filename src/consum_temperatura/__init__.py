@@ -20,6 +20,6 @@ from .alerts import band_regime, complete_days, level_jumps
 from .seasonal import (winter_label, christmas, prepare_winter, winter_design, fit_winter, choose_th,
                        response_by_winter, asymmetry, falling_days, flexible_memory, hysteresis_test, summer_phase,
                        response_by_phase)
-from . import synthetic, figstyle
+from . import synthetic, figstyle, forward
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
