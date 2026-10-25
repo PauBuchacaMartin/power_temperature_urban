@@ -83,7 +83,7 @@ Robustesa de R2 (canvi de χ⁰ 2021→2024, %/K): base +2,82 ± 0,33 · 2022→
 ## Decisions post hoc (declarades)
 
 - **Regla de qualitat per any (24/10/2026):** escrita després de veure la χ de la v0.13; només fa servir mètriques de dades i queda congelada per al 2026.
-- **Q com a mètrica principal en lloc de λ (24/10/2026):** proposta del tècnic després de veure que λ és fràgil al *bootstrap*. Decideix Pau.
+- **Q com a mètrica principal en lloc de λ:** proposta del tècnic (24/10, λ és fràgil al *bootstrap*), **decidida per Pau el 25/10**.
 - Hivern desembre-febrer i model de llindars a tota la corba: com a la v0.13 (annex o *post hoc*).
 
 ## Figures (`docs/figures_v14/`)
@@ -100,7 +100,8 @@ Robustesa de R2 (canvi de χ⁰ 2021→2024, %/K): base +2,82 ± 0,33 · 2022→
 ## Pendent
 
 - [ ] Executar la v0.14 a Colab (humitat, preu, ERA5 horari real) i comprovar que la resta coincideix.
-- [ ] Decisió de Pau: Q o λ com a mètrica principal.
-- [ ] Decisió de Pau: com queda R4 a l'article (resultat principal, secundari o «indici»).
+- [x] Decisió de Pau (25/10): **Q** com a mètrica principal; λ només com a prova de forma.
+- [x] Decisió de Pau (25/10): R4 es presenta com a **indici**.
+- [x] Decisió de Pau (25/10): «la V es torna menys simètrica» **surt de l'article**.
 - [ ] Validació externa del total anual (Ajuntament / ICAEN) i correu a Open Data BCN.
 - [ ] Dades d'autoconsum per CP (prova directa de la FV).
